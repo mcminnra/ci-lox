@@ -1,7 +1,7 @@
-var a = "global";
-{
-  fun showA() { print a; }
-  showA();          // "global"
-  var a = "block";
-  showA();          // should be "global", jlox before ch.11 prints "block"
+class DevonshireCream {
+  serveOn() {
+    return "Scones";
+  }
 }
+
+print DevonshireCream; // Prints "DevonshireCream".
