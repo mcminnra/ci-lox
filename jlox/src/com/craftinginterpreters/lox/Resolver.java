@@ -100,6 +100,20 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         declare(stmt.name);
         define(stmt.name);
 
+        if (
+            stmt.superclass != null &&
+            stmt.name.lexeme.equals(stmt.superclass.name.lexeme)
+        ) {
+            Lox.error(
+                stmt.superclass.name,
+                "A class can't inherit from itself."
+            );
+        }
+
+        if (stmt.superclass != null) {
+            resolve(stmt.superclass);
+        }
+
         beginScope();
         scopes.peek().put("this", true);
 
@@ -246,16 +260,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitThisExpr(Expr.This expr) {
+        if (currentClass == ClassType.NONE) {
+            Lox.error(expr.keyword, "can't this 'this' outside of a class.");
+        }
+
         resolveLocal(expr, expr.keyword);
         return null;
     }
 
     @Override
     public Void visitGroupingExpr(Expr.Grouping expr) {
-        if (currentClass == ClassType.NONE) {
-            Lox.Error(expr.keyword, "can't this 'this' outside of a class.");
-        }
-
         resolve(expr.expression);
         return null;
     }
